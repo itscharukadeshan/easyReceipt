@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { generate } from "@pdfme/generator";
+import { text, image, barcodes } from "@pdfme/schemas";
 import { invoiceTemplate } from "../templates/invoiceTemplate";
 import { createInvoiceInputs } from "../utils/invoiceUtils";
 
@@ -13,7 +14,15 @@ const InvoiceGenerator: React.FC = () => {
 
   const handleGeneratePDF = async () => {
     const inputs = createInvoiceInputs(customerName, billAmount, serviceFee);
-    const pdf = await generate({ template: invoiceTemplate, inputs });
+    const pdf = await generate({
+      template: invoiceTemplate,
+      inputs,
+      plugins: {
+        text,
+        image,
+        qrcode: barcodes.qrcode,
+      },
+    });
     const blob = new Blob([pdf.buffer], { type: "application/pdf" });
     setPdfBlob(blob);
   };
